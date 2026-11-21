@@ -6,6 +6,7 @@
 #include <QQuickItem>
 #include <QQuickWindow>
 #include <QVideoSink>
+#include <functional>
 
 MacBridge::MacBridge(QObject* parent) : MacBridgeBase(parent) {
     initPrefs();
@@ -45,14 +46,57 @@ void MacBridge::attachWindow(QQuickWindow* window) {
 }
 
 void MacBridge::followHost() {
-    if (!stage_) return;
-    if (!host_) host_ = window_ ? window_->findChild<QQuickItem*>(QStringLiteral("videoHost")) : nullptr;
+    if (!stage_ || !window_) return;
+    if (!host_) host_ = window_->findChild<QQuickItem*>(QStringLiteral("videoHost"));
     const bool show = host_ && m_hasSource && host_->width() > 1 && host_->height() > 1;
     if (show) {
-        if (stage_->x() != host_->x()) stage_->setX(host_->x());
-        if (stage_->y() != host_->y()) stage_->setY(host_->y());
-        if (stage_->width() != host_->width()) stage_->setWidth(host_->width());
-        if (stage_->height() != host_->height()) stage_->setHeight(host_->height());
+        // On Windows the picture is a native window above the whole scene. Here it is
+        // an item, so it must sit above the page's opaque video card but below the
+        // page's own overlays: inside the visible page's "videoArea" when there is one,
+        // otherwise directly under the pages (minimal page, fullscreen).
+        QQuickItem* container = host_->parentItem();
+        // Visual-tree search: QML items are not always QObject children of their parents.
+        QList<QQuickItem*> areas;
+        std::function<void(QQuickItem*)> walk = [&](QQuickItem* item) {
+            for (QQuickItem* c : item->childItems()) {
+                if (c == stage_) continue;
+                if (c->objectName() == QLatin1String("videoArea")) areas << c;
+                walk(c);
+            }
+        };
+        walk(window_->contentItem());
+        static int dbg = 0;
+        if (qEnvironmentVariableIsSet("VEYRA_STAGE_DEBUG") && dbg++ % 60 == 0)
+            for (QQuickItem* area : areas)
+                veyra::log::info("mac-stage", QStringLiteral("area vis=%1 %2x%3 scene=%4,%5")
+                    .arg(area->isVisible()).arg(area->width()).arg(area->height())
+                    .arg(area->mapToScene({0,0}).x()).arg(area->mapToScene({0,0}).y()).toStdString());
+        for (QQuickItem* area : areas) {
+            if (!area->isVisible() || area->width() < 2 || area->height() < 2) continue;
+            bool shown = true;
+            for (QQuickItem* p = area; p; p = p->parentItem())
+                if (!p->isVisible() || p->opacity() <= 0.0) { shown = false; break; }
+            if (!shown) continue;
+            const QRectF a = area->mapRectToScene(QRectF(0, 0, area->width(), area->height()));
+            const QRectF h = host_->mapRectToScene(QRectF(0, 0, host_->width(), host_->height()));
+            if (a.intersects(h)) { container = area; break; }
+        }
+        if (stage_->parentItem() != container) {
+            stage_->setParentItem(container);
+            if (container == host_->parentItem()) {
+                stage_->setZ(0);
+                stage_->stackAfter(host_);
+            } else {
+                stage_->setZ(0);
+                const auto kids = container->childItems();
+                if (!kids.isEmpty() && kids.first() != stage_) stage_->stackBefore(kids.first());
+            }
+        }
+        const QRectF r = container->mapRectFromItem(host_, QRectF(0, 0, host_->width(), host_->height()));
+        if (stage_->x() != r.x()) stage_->setX(r.x());
+        if (stage_->y() != r.y()) stage_->setY(r.y());
+        if (stage_->width() != r.width()) stage_->setWidth(r.width());
+        if (stage_->height() != r.height()) stage_->setHeight(r.height());
     }
     if (stage_->isVisible() != show) stage_->setVisible(show);
 }
