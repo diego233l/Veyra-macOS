@@ -32,7 +32,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <format>
 
 namespace {
 constexpr int kAudioDisabled = -1;
@@ -415,7 +414,7 @@ void MacBridge::capWatchFirstFrame(const QString& kind, const QString& name) {
         setSourceOpen(kind, name, s.width(), s.height(), fps);
         m_captureStatus.clear();
         emit captureChanged();
-        veyra::log::info("capture", std::format("{} first frame {}x{}", kind.toStdString(), s.width(), s.height()));
+        veyra::log::info("capture", QStringLiteral("%1 first frame %2x%3").arg(kind).arg(s.width()).arg(s.height()).toStdString());
     });
 }
 
@@ -467,8 +466,7 @@ bool MacBridge::startCaptureSession() {
     m_liveOpeningText = m_captureStatus;
     m_captureSessionSummary = captureSessionSummary();
     emit captureChanged();
-    veyra::log::info("capture", std::format("start device={} format={}", device.description().toStdString(),
-                                            captureFormatLabel().toStdString()));
+    veyra::log::info("capture", QStringLiteral("start device=%1 format=%2").arg(device.description(), captureFormatLabel()).toStdString());
     return true;
 }
 
@@ -662,7 +660,7 @@ bool MacBridge::startScreenCapture(bool cropPreview) {
     capSettings().setValue(QStringLiteral("screen/target"), m_screenTargetId);
     m_liveOpeningText = macText("Connecting…");
     if (cropPreview) emit notice(macText("Cropping is applied by the picture view on macOS."), false);
-    veyra::log::info("screen", std::format("start target={} label={}", m_screenTargetId.toStdString(), label.toStdString()));
+    veyra::log::info("screen", QStringLiteral("start target=%1 label=%2").arg(m_screenTargetId, label).toStdString());
     emit captureChanged();
     return true;
 }
@@ -766,7 +764,7 @@ void MacBridge::startRecording(const QString&) {
     emit recordingChanged();
     capRecorder_->record();
     capRecTimer_->start();
-    veyra::log::info("record", std::format("start {}", QDir(dir).filePath(name).toStdString()));
+    veyra::log::info("record", ("start " + QDir(dir).filePath(name)).toStdString());
 }
 
 void MacBridge::stopRecording(const QString&) {

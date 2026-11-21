@@ -12,7 +12,6 @@
 #include <QTranslator>
 
 #include <algorithm>
-#include <format>
 #include <memory>
 #include <mutex>
 #include <vector>
@@ -116,7 +115,7 @@ std::unique_ptr<CatalogTranslator> load(const QString& code) {
     std::stable_sort(t->patterns.begin(), t->patterns.end(), [](const Pattern& a, const Pattern& b) {
         return a.match.pattern().size() > b.match.pattern().size();
     });
-    veyra::log::info("i18n", std::format("catalog {} entries={} patterns={}", code.toStdString(), t->exact.size(), t->patterns.size()));
+    veyra::log::info("i18n", QStringLiteral("catalog %1 entries=%2 patterns=%3").arg(code).arg(t->exact.size()).arg(qsizetype(t->patterns.size())).toStdString());
     return t->exact.isEmpty() ? nullptr : std::move(t);
 }
 
@@ -191,7 +190,7 @@ bool apply(const QString& code) {
     if (!active) return false;
     QCoreApplication::installTranslator(active.get());
     currentCode = code;
-    veyra::log::info("i18n", std::format("interface language {}", code.toStdString()));
+    veyra::log::info("i18n", ("interface language " + code).toStdString());
     return true;
 }
 
