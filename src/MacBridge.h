@@ -41,6 +41,7 @@ public:
 #include "parts/Enhance.h"
 #include "parts/Capture.h"
 #include "parts/Prefs.h"
+#include "parts/RemotePlay.h"
 
 private:
     void followHost();

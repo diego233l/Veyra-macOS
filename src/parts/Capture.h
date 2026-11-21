@@ -62,11 +62,9 @@ public:
     void openRecordingDirectory() override;
 
     // --- not available on macOS ------------------------------------------------
-    void openPs5Dialog() override;
     void openMoonlightDialog() override;
     void openXboxDialog() override;
     void moonlightCapture(bool on) override;
-    bool ps5Connect() override;
     void setVirtualCameraEnabled(bool enabled) override;
     void installVirtualCamera() override;
     void uninstallVirtualCamera() override;

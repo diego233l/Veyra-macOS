@@ -13,6 +13,7 @@ MacBridge::MacBridge(QObject* parent) : MacBridgeBase(parent) {
     initPlayback();
     initEnhance();
     initCapture();
+    initRemotePlay();
 }
 
 QString MacBridge::macText(const char* english) {
@@ -42,6 +43,7 @@ void MacBridge::attachWindow(QQuickWindow* window) {
     attachPlayback(window);
     attachEnhance(window);
     attachCapture(window);
+    attachRemotePlay(window);
     followHost();
 }
 
