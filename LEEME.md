@@ -31,7 +31,8 @@ Si macOS sigue bloqueándola: Preferencias del Sistema → Seguridad y privacida
 
 ### Cómo se genera el .dmg
 
-GitHub Actions (`.github/workflows/macos.yml`) compila una app universal (x86_64 + arm64) en cada
+GitHub Actions (`.github/workflows/macos.yml`) compila una app Intel x86_64 (mínimo macOS 12;
+en Apple Silicon funciona con Rosetta) con PS5 Remote Play incluido, en cada
 push a `main`/`master` y al crear una etiqueta `v*`. También se puede lanzar a mano
 (Actions → *macOS build* → *Run workflow*). El resultado queda como artefacto de la ejecución
 y en la release `latest-mac` (o en la release de la etiqueta).
@@ -42,8 +43,11 @@ Doble clic en **`compilar-mac.command`** (o `bash compilar-mac.command` en Termi
 
 - Si faltan las herramientas de línea de comandos de Xcode, abre su instalador: cuando acabe,
   vuelve a ejecutar el script.
-- No necesita Homebrew. Descarga en `.tools/` CMake, Ninja y Qt 6.8.3 (~1,6 GB).
-  La primera vez tarda **10–20 minutos**; las siguientes reutiliza lo descargado.
+- No necesita Homebrew. Descarga en `.tools/` CMake, Ninja, Qt 6.8.3 (~1,6 GB), vcpkg con las
+  librerías de PS5 Remote Play (OpenSSL, Opus, json-c, miniupnpc, libevent, SDL3, FFmpeg) y
+  chiaki-ng en la versión de Veyra 2.1.9 con sus parches.
+  La primera vez tarda **40–80 minutos** (compila FFmpeg y OpenSSL); las siguientes reutiliza todo.
+- `VEYRA_REMOTEPLAY=0 bash compilar-mac.command` compila sin Remote Play (unos 15 minutos).
 - Al terminar, instala la app en `~/Applications/Veyra.app` y la abre.
 
 ## Qué funciona en macOS

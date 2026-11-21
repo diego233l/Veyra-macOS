@@ -1,0 +1,16 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "name": "veyra-macos",
+  "version-string": "2.1.9",
+  "description": "Native dependencies for Veyra's PS5 Remote Play on macOS (chiaki-ng, video decode, gamepad input).",
+  "builtin-baseline": "9967a8eb5f4f5cd7be2b6717d31ddb7ff84c4751",
+  "dependencies": [
+    "openssl",
+    "opus",
+    "json-c",
+    "miniupnpc",
+    { "name": "libevent", "default-features": false, "features": ["thread"] },
+    { "name": "sdl3", "default-features": false },
+    { "name": "ffmpeg", "default-features": false, "features": ["avcodec", "swscale"] }
+  ]
+}

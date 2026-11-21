@@ -1,15 +1,20 @@
 #!/bin/bash
-# Compila Veyra para macOS (Intel o Apple Silicon, macOS 12 Monterey o posterior)
-# y la instala en ~/Applications. Doble clic en este archivo o: bash compilar-mac.command
+# Compila Veyra para macOS (Intel, macOS 12 Monterey o posterior; en Apple Silicon
+# funciona con Rosetta) y la instala en ~/Applications.
+# Doble clic en este archivo o: bash compilar-mac.command
 #
 # No necesita Homebrew. Descarga en la carpeta .tools/ de este proyecto:
-#   - CMake, Ninja y aqtinstall (en un entorno virtual de Python)
+#   - CMake, Ninja, aqtinstall, pkgconf, protobuf y grpcio-tools (entorno virtual de Python)
 #   - Qt 6.8.3 para macOS (~1,6 GB) con Qt Multimedia y Qt Shader Tools
-# Volver a ejecutarlo reutiliza lo ya descargado.
+#   - vcpkg y las librerías de PS5 Remote Play (OpenSSL, Opus, json-c, miniupnpc,
+#     libevent, SDL3, FFmpeg) compiladas para macOS 12; la primera vez tarda ~30-60 min
+#   - chiaki-ng en la versión que usa Veyra, con sus parches
+# Volver a ejecutarlo reutiliza lo ya descargado y compilado.
 #
 # Variables opcionales:
 #   CI=1            no copia la app a ~/Applications ni la abre (GitHub Actions)
-#   VEYRA_ARCH=x86_64|arm64   arquitectura a compilar (por defecto, la del Mac)
+#   VEYRA_ARCH=x86_64|arm64   arquitectura a compilar (por defecto x86_64)
+#   VEYRA_REMOTEPLAY=0        compila sin PS5 Remote Play (sin vcpkg ni chiaki-ng)
 #   VEYRA_JOBS=N    compilaciones en paralelo
 set -euo pipefail
 
@@ -35,7 +40,13 @@ MACOS_MAJOR="${MACOS_VER%%.*}"
 if [ "$MACOS_MAJOR" -lt 12 ]; then
   fallo "Necesitas macOS 12 Monterey o posterior (tienes $MACOS_VER). Qt 6.8 no funciona en versiones anteriores."
 fi
-ARCH="${VEYRA_ARCH:-$(uname -m)}"
+ARCH="${VEYRA_ARCH:-x86_64}"
+REMOTEPLAY="${VEYRA_REMOTEPLAY:-1}"
+case "$ARCH" in
+  x86_64) TRIPLET=x64-osx-12 ;;
+  arm64)  TRIPLET=arm64-osx-12 ;;
+  *) fallo "VEYRA_ARCH debe ser x86_64 o arm64 (una sola arquitectura: las librerías de Remote Play no son universales)." ;;
+esac
 JOBS="${VEYRA_JOBS:-$(sysctl -n hw.ncpu 2>/dev/null || echo 4)}"
 ok "macOS $MACOS_VER · $ARCH · $JOBS núcleos"
 
@@ -50,7 +61,7 @@ fi
 ok "$(xcrun clang --version | head -1)"
 
 # --- 2. CMake, Ninja y aqtinstall en un entorno virtual ------------------------
-paso "Preparando CMake, Ninja y el descargador de Qt"
+paso "Preparando CMake, Ninja, pkgconf, protobuf y el descargador de Qt"
 mkdir -p "$TOOLS"
 PY="$(xcrun --find python3 2>/dev/null || command -v python3 || true)"
 [ -n "$PY" ] || fallo "No encuentro python3 (debería venir con las herramientas de Xcode)."
@@ -58,9 +69,12 @@ VENV="$TOOLS/venv"
 if [ ! -x "$VENV/bin/python" ]; then
   "$PY" -m venv "$VENV" || fallo "No se pudo crear el entorno de Python."
 fi
-if ! "$VENV/bin/python" -c "import aqt" >/dev/null 2>&1 || [ ! -x "$VENV/bin/cmake" ] || [ ! -x "$VENV/bin/ninja" ]; then
+if ! "$VENV/bin/python" -c "import aqt, google.protobuf, grpc_tools" >/dev/null 2>&1 || [ ! -x "$VENV/bin/cmake" ] \
+   || [ ! -x "$VENV/bin/ninja" ] || [ ! -x "$VENV/bin/pkgconf" ] \
+   || "$VENV/bin/cmake" --version 2>/dev/null | head -1 | grep -q 'version [4-9]'; then
   "$VENV/bin/python" -m pip install --quiet --upgrade pip
-  "$VENV/bin/python" -m pip install --quiet "cmake>=3.24" ninja aqtinstall
+  # protobuf + grpcio-tools: el generador nanopb de chiaki-ng los usa en lugar de protoc.
+  "$VENV/bin/python" -m pip install --quiet "cmake>=3.24,<4" ninja aqtinstall pkgconf protobuf grpcio-tools
 fi
 export PATH="$VENV/bin:$PATH"
 ok "$(cmake --version | head -1) · ninja $(ninja --version)"
@@ -78,20 +92,80 @@ fi
 [ -f "$QT_DIR/lib/cmake/Qt6/Qt6Config.cmake" ] || fallo "Qt no se instaló correctamente en $QT_DIR"
 ok "Qt en $QT_DIR"
 
-# --- 4. Compilar ----------------------------------------------------------------
+# --- 4. Librerías de PS5 Remote Play (vcpkg) y chiaki-ng ------------------------
+RP_ARGS=(-DVEYRA_ENABLE_REMOTEPLAY=OFF)
+if [ "$REMOTEPLAY" = "1" ]; then
+  paso "Librerías de PS5 Remote Play ($TRIPLET)"
+  # FFmpeg para Intel necesita el ensamblador nasm.
+  if [ "$ARCH" = "x86_64" ] && ! command -v nasm >/dev/null 2>&1; then
+    NASM_VER=3.01
+    NASM_DIR="$TOOLS/nasm-$NASM_VER"
+    if [ ! -x "$NASM_DIR/nasm" ]; then
+      aviso "Descargando nasm $NASM_VER..."
+      curl -fsSL --retry 3 -o "$TOOLS/nasm.zip" \
+        "https://www.nasm.us/pub/nasm/releasebuilds/$NASM_VER/macosx/nasm-$NASM_VER-macosx.zip"
+      (cd "$TOOLS" && unzip -qo nasm.zip && rm -f nasm.zip)
+    fi
+    export PATH="$NASM_DIR:$PATH"
+  fi
+  command -v git >/dev/null 2>&1 || fallo "Falta git (viene con las herramientas de Xcode)."
+  BASELINE="$("$VENV/bin/python" -c 'import json;print(json.load(open("vcpkg.json"))["builtin-baseline"])')"
+  VCPKG_ROOT="$TOOLS/vcpkg"
+  if [ ! -d "$VCPKG_ROOT/.git" ]; then
+    git clone --filter=blob:none https://github.com/microsoft/vcpkg.git "$VCPKG_ROOT"
+  fi
+  if ! git -C "$VCPKG_ROOT" cat-file -e "$BASELINE^{commit}" 2>/dev/null; then
+    git -C "$VCPKG_ROOT" fetch --filter=blob:none origin
+  fi
+  if [ "$(git -C "$VCPKG_ROOT" rev-parse HEAD)" != "$BASELINE" ]; then
+    git -C "$VCPKG_ROOT" checkout -q "$BASELINE"
+    rm -f "$VCPKG_ROOT/vcpkg"
+  fi
+  [ -x "$VCPKG_ROOT/vcpkg" ] || "$VCPKG_ROOT/bootstrap-vcpkg.sh" -disableMetrics
+  export VCPKG_ROOT VCPKG_DISABLE_METRICS=1
+  export PKG_CONFIG="$VENV/bin/pkgconf"
+  VCPKG_INSTALLED="$TOOLS/vcpkg_installed"
+  aviso "La primera vez compila OpenSSL, FFmpeg, SDL3... (30-60 min). Después se reutiliza."
+  "$VCPKG_ROOT/vcpkg" install \
+    --triplet "$TRIPLET" --overlay-triplets="$ROOT/triplets" \
+    --x-install-root="$VCPKG_INSTALLED" --clean-after-build
+  ok "Librerías listas en $VCPKG_INSTALLED/$TRIPLET"
+
+  paso "chiaki-ng (versión de Veyra 2.1.9 con sus parches)"
+  CHIAKI_DIR="$TOOLS/chiaki-ng"
+  bash "$ROOT/scripts/fetch-chiaki.sh" "$CHIAKI_DIR"
+
+  export PKG_CONFIG_PATH="$VCPKG_INSTALLED/$TRIPLET/lib/pkgconfig:$VCPKG_INSTALLED/$TRIPLET/share/pkgconfig"
+  RP_ARGS=(
+    -DVEYRA_ENABLE_REMOTEPLAY=ON
+    -DVEYRA_CHIAKI_SOURCE_DIR="$CHIAKI_DIR"
+    -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
+    -DVCPKG_TARGET_TRIPLET="$TRIPLET"
+    -DVCPKG_OVERLAY_TRIPLETS="$ROOT/triplets"
+    -DVCPKG_INSTALLED_DIR="$VCPKG_INSTALLED"
+    -DVCPKG_MANIFEST_INSTALL=OFF
+    -DPKG_CONFIG_EXECUTABLE="$VENV/bin/pkgconf"
+    -DPython3_EXECUTABLE="$VENV/bin/python"
+    -DPYTHON_EXECUTABLE="$VENV/bin/python"
+  )
+fi
+
+# --- 5. Compilar ----------------------------------------------------------------
 paso "Configurando el proyecto"
 cmake -S "$ROOT" -B "$BUILD" -G Ninja \
   -DCMAKE_PREFIX_PATH="$QT_DIR" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_OSX_ARCHITECTURES="$ARCH" \
-  -DCMAKE_OSX_DEPLOYMENT_TARGET=12.0
+  -DCMAKE_OSX_DEPLOYMENT_TARGET=12.0 \
+  -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+  "${RP_ARGS[@]}"
 
 paso "Compilando Veyra"
 cmake --build "$BUILD" --parallel "$JOBS"
 [ -d "$APP" ] || fallo "La compilación no generó $APP"
 ok "Compilado: $APP"
 
-# --- 5. Empaquetar Qt dentro de la app ------------------------------------------
+# --- 6. Empaquetar Qt dentro de la app ------------------------------------------
 paso "Incluyendo Qt dentro de Veyra.app"
 "$QT_DIR/bin/macdeployqt" "$APP" -qmldir="$ROOT/qml" -qmldir="$ROOT/mac" -always-overwrite
 # macdeployqt solo copia los plugins de multimedia que detecta; nos aseguramos de ambos backends.
@@ -107,7 +181,7 @@ xattr -cr "$APP" 2>/dev/null || true
 codesign --force --deep --sign - "$APP"
 codesign --verify --deep "$APP" && ok "Firma correcta"
 
-# --- 6. Instalar ----------------------------------------------------------------
+# --- 7. Instalar ----------------------------------------------------------------
 if [ "${CI:-}" = "1" ]; then
   ok "Modo CI: la app queda en $APP"
   exit 0

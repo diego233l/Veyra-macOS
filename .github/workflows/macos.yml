@@ -1,5 +1,6 @@
 # Compila Veyra para macOS en GitHub y publica Veyra-macOS.dmg / .zip.
-# App universal (Intel x86_64 + Apple Silicon arm64), mínimo macOS 12 Monterey.
+# App Intel x86_64 (MacBook Pro 2015 y posteriores), mínimo macOS 12 Monterey; en
+# Apple Silicon funciona con Rosetta. Incluye PS5 Remote Play (chiaki-ng + vcpkg).
 name: macOS build
 
 on:
@@ -18,13 +19,18 @@ concurrency:
 
 env:
   QT_VERSION: "6.8.3"
+  VEYRA_TRIPLET: x64-osx-12
+  # vcpkg guarda aquí los paquetes ya compilados; actions/cache los conserva entre ejecuciones.
+  VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}/.vcpkg-cache
+  VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/.vcpkg-cache,readwrite"
+  VCPKG_DISABLE_METRICS: "1"
 
 jobs:
   build:
     # Los runners Intel (macos-13) se han retirado; se compila en Apple Silicon
-    # una app universal que también funciona en Macs Intel con macOS 12+.
+    # para x86_64 (compilación cruzada con clang -arch x86_64).
     runs-on: macos-latest
-    timeout-minutes: 90
+    timeout-minutes: 150
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -41,15 +47,55 @@ jobs:
           path: .tools/Qt
           key: qt-${{ env.QT_VERSION }}-macos-clang_64-multimedia-shadertools-v1
 
-      - name: Build (universal, Release)
+      - name: Build tools (nasm for FFmpeg x86_64)
+        run: |
+          brew install nasm
+          nasm -v
+          mkdir -p .vcpkg-cache
+
+      # Restore/save split so compiled packages are kept even if a later step fails:
+      # the first run builds FFmpeg/OpenSSL/SDL3 (~30-50 min), later runs take minutes.
+      - name: Restore vcpkg packages
+        id: vcpkg-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .vcpkg-cache
+          key: vcpkg-${{ env.VEYRA_TRIPLET }}-${{ hashFiles('vcpkg.json', 'triplets/**') }}-${{ github.run_id }}
+          restore-keys: |
+            vcpkg-${{ env.VEYRA_TRIPLET }}-${{ hashFiles('vcpkg.json', 'triplets/**') }}-
+            vcpkg-${{ env.VEYRA_TRIPLET }}-
+
+      - name: Build (x86_64, Release, PS5 Remote Play)
         env:
           CI: "1"
-          VEYRA_ARCH: "x86_64;arm64"
+          VEYRA_ARCH: "x86_64"
+          VEYRA_REMOTEPLAY: "1"
         run: bash ./compilar-mac.command
 
-      - name: Check binary architectures
+      - name: Save vcpkg packages
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: .vcpkg-cache
+          key: vcpkg-${{ env.VEYRA_TRIPLET }}-${{ hashFiles('vcpkg.json', 'triplets/**') }}-${{ github.run_id }}
+
+      - name: vcpkg logs on failure
+        if: failure()
         run: |
-          lipo -info build-mac/Veyra.app/Contents/MacOS/Veyra
+          find .tools/vcpkg/buildtrees -name '*.log' -newer vcpkg.json -size +0 2>/dev/null | while read -r f; do
+            echo "::group::$f"; tail -80 "$f"; echo "::endgroup::"
+          done || true
+
+      - name: Check binary architecture and minimum macOS
+        run: |
+          BIN=build-mac/Veyra.app/Contents/MacOS/Veyra
+          lipo -info "$BIN"
+          lipo -info "$BIN" | grep -q x86_64
+          vtool -show-build "$BIN" || otool -l "$BIN" | grep -A4 -E 'LC_BUILD_VERSION|LC_VERSION_MIN'
+          MINOS="$(vtool -show-build "$BIN" 2>/dev/null | awk '/minos/{print $2; exit}')"
+          echo "minos=$MINOS"
+          [ -z "$MINOS" ] || [ "${MINOS%%.*}" -le 12 ] || { echo "::error::minos $MINOS > 12"; exit 1; }
+          otool -L "$BIN" | grep -vE '@rpath|/System/|/usr/lib/' || true
           lipo -info build-mac/Veyra.app/Contents/Frameworks/QtCore.framework/QtCore
           ls build-mac/Veyra.app/Contents/PlugIns/multimedia
           du -sh build-mac/Veyra.app
@@ -95,7 +141,8 @@ jobs:
           body: |
             Compilación automática de `${{ github.sha }}`.
             Descarga **Veyra-macOS.dmg**, arrastra Veyra a Aplicaciones y ábrela la primera vez con clic derecho → Abrir.
-            Funciona en Macs Intel y Apple Silicon con macOS 12 Monterey o posterior.
+            Compilada para Macs Intel con macOS 12 Monterey o posterior (en Apple Silicon funciona con Rosetta).
+            Incluye PS5 Remote Play.
           files: |
             dist/Veyra-macOS.dmg
             dist/Veyra-macOS.zip
