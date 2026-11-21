@@ -337,6 +337,43 @@
    "zh": "That connection would create a loop",
    "en": "That connection would create a loop",
    "es": "Esa conexión crearía un bucle"
+  },
+  {
+   "zh": "No gamepad found: keyboard controls are WASD / arrows, Space ✕, Backspace ○, F □, R △, Q/E L1/R1, Z/C L2/R2, Tab Options, P PS button.",
+   "en": "No gamepad found: keyboard controls are WASD / arrows, Space ✕, Backspace ○, F □, R △, Q/E L1/R1, Z/C L2/R2, Tab Options, P PS button.",
+   "es": "No hay mando: controles de teclado WASD / flechas, Espacio ✕, Retroceso ○, F □, R △, Q/E L1/R1, Z/C L2/R2, Tab Options, P botón PS."
+  },
+  {
+   "zh": "Keyboard controls are active.",
+   "en": "Keyboard controls are active.",
+   "es": "Controles de teclado activos."
+  },
+  {
+   "zh": "VideoToolbox hardware decode",
+   "en": "VideoToolbox hardware decode",
+   "es": "descodificación por hardware VideoToolbox"
+  },
+  {
+   "zh": "software decode",
+   "en": "software decode",
+   "es": "descodificación por software"
+  },
+  {
+   "zh": "The PS5 asks for its login PIN: enter it in the PS5 dialog.",
+   "en": "The PS5 asks for its login PIN: enter it in the PS5 dialog.",
+   "es": "La PS5 pide su PIN de inicio de sesión: introdúcelo en la ventana de PS5."
+  },
+  {
+   "zh": "PS5 controller passthrough for a capture card is not available on Mac yet; use PS5 Remote Play instead.",
+   "en": "PS5 controller passthrough for a capture card is not available on Mac yet; use PS5 Remote Play instead.",
+   "es": "El mando de PS5 a través de capturadora aún no está en Mac; usa PS5 Remote Play."
+  },
+  {
+   "zh": "D3D12VA 硬件",
+   "en": "Hardware (VideoToolbox)",
+   "es": "Hardware (VideoToolbox)",
+   "fr": "Matériel (VideoToolbox)",
+   "de": "Hardware (VideoToolbox)"
   }
  ]
 }

@@ -14,5 +14,6 @@
   <key>NSHighResolutionCapable</key><true/>
   <key>NSCameraUsageDescription</key><string>Veyra usa la cámara o la capturadora como fuente de vídeo.</string>
   <key>NSMicrophoneUsageDescription</key><string>Veyra usa el micrófono o el audio de la capturadora.</string>
+  <key>NSLocalNetworkUsageDescription</key><string>Veyra busca y conecta con tu PS5 en la red local.</string>
   <key>NSScreenCaptureUsageDescription</key><string>Veyra captura la pantalla o una ventana como fuente de vídeo.</string>
 </dict></plist>
