@@ -1,1 +1,115 @@
-{}
+{
+  "volume": 1.0,
+  "maximumVolume": 3.0,
+  "playbackRate": 1.0,
+  "playbackSpeed": 1.0,
+  "minimumPlaybackRate": 0.25,
+  "maximumPlaybackRate": 4.0,
+  "colorContrast": 1.0,
+  "colorSaturation": 1.0,
+  "chainValid": true,
+  "compareSplit": 0.5,
+  "positionText": "00:00",
+  "durationText": "00:00",
+  "sourceAspect": 1.7777777777777777,
+  "previewAspect": 1.7777777777777777,
+  "defaultPage": "home",
+  "appName": "Veyra",
+  "version": "2.1.9 (macOS)",
+  "exportContainer": 0,
+  "exportAudioPolicy": 0,
+  "exportSubtitlePolicy": 0,
+  "replaySeconds": 60,
+  "recordingAudio": true,
+  "defaultPresetIndex": -1,
+  "currentPresetName": "自定义",
+  "displayRefreshHz": 60.0,
+  "fgMaxMultiplier": 1,
+  "fgMultiplier": 1,
+  "effectiveOutputFps": 0.0,
+  "outputRateRatio": 1.0,
+  "hdrCurveStrength": 1.0,
+  "hdrDisplayPeakNits": 400.0,
+  "sourceIsSdr": true,
+  "timelineSeekable": true,
+  "uiDeviceGeneration": 0,
+  "gpuPriorityStatus": "",
+  "runStatusLevel": "",
+  "liveTimeshift": {
+    "available": false,
+    "enabled": false,
+    "end": 0
+  },
+  "hdrRecommendation": {
+    "available": false,
+    "cllNits": 0,
+    "fallNits": 0,
+    "reason": ""
+  },
+  "hdrDisplayInfo": {
+    "valid": false,
+    "plausible": true,
+    "peakNits": 0,
+    "minNits": 0,
+    "fullFrameNits": 0
+  },
+  "hdrDials": {
+    "highlight": 0,
+    "brightness": 0,
+    "shadowLift": 0
+  },
+  "hdrSourceInfo": {
+    "valid": false,
+    "doviProfile": 0
+  },
+  "hdrAxes": {
+    "content": "",
+    "environment": ""
+  },
+  "hdrCurveParams": {
+    "midGrayNits": 0,
+    "shadowLiftEv100": 0
+  },
+  "videoHdrParams": {
+    "peakNits": 0
+  },
+  "nrStabilizerState": {
+    "strength": 0,
+    "tolerance": 0
+  },
+  "exclusionState": {
+    "enabled": false
+  },
+  "antiAliasParams": {
+    "summary": ""
+  },
+  "recordingState": {
+    "active": false,
+    "finishing": false,
+    "seconds": 0
+  },
+  "replayState": {
+    "active": false
+  },
+  "ps5": {
+    "account": "",
+    "active": false,
+    "bitrate": 0,
+    "busy": false,
+    "calibrating": false,
+    "codec": "",
+    "controller": "",
+    "decode": "",
+    "gyro": false,
+    "host": "",
+    "profile": "",
+    "quality": 0,
+    "sampling": "",
+    "status": "",
+    "viewOnly": false
+  },
+  "ps5Control": {
+    "available": false,
+    "enabled": false
+  }
+}
