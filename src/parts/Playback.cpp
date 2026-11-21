@@ -284,6 +284,7 @@ void MacBridge::resumeLastSource() {
         return;
     }
     if (kind == QLatin1String("capture")) { resumeCaptureSession(); return; }
+    if (kind == QLatin1String("ps5")) { ps5Load(); if (!ps5Connect()) openPs5Dialog(); return; }
 }
 
 void MacBridge::showPlaylist() { emit playlistRequested(); }
@@ -315,6 +316,7 @@ void MacBridge::togglePlayPause() {
 }
 
 void MacBridge::stopPlayback() {
+    if (m_sourceKind == QLatin1String("ps5") || remotePlayActive()) { ps5Cancel(); return; }
     const bool wasPlayer = !playPath_.isEmpty();
     if (QObject* list = playlist(); list && wasPlayer)
         QMetaObject::invokeMethod(list, "setPlayback", Qt::DirectConnection,

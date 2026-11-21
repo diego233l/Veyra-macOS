@@ -797,9 +797,6 @@ void MacBridge::openRecordingDirectory() {
 // ---------------------------------------------------------------------------
 // Windows-only sources and outputs
 // ---------------------------------------------------------------------------
-void MacBridge::openPs5Dialog() {
-    emit notice(macText("PS5 Remote Play is not available in the macOS version. Sony's PS Remote Play app for Mac can be captured with Screen capture."), true);
-}
 void MacBridge::openMoonlightDialog() {
     emit notice(macText("PC streaming (Moonlight) is not available in the macOS version. Moonlight for Mac can be captured with Screen capture."), true);
 }
@@ -807,7 +804,6 @@ void MacBridge::openXboxDialog() {
     emit notice(macText("Xbox streaming is not available in the macOS version. Xbox Cloud Gaming in a browser can be captured with Screen capture."), true);
 }
 void MacBridge::moonlightCapture(bool) { openMoonlightDialog(); }
-bool MacBridge::ps5Connect() { openPs5Dialog(); return false; }
 void MacBridge::setVirtualCameraEnabled(bool enabled) {
     if (enabled) emit notice(macText("The Veyra virtual camera is Windows-only."), true);
 }

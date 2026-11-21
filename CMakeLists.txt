@@ -48,6 +48,15 @@ qt_add_resources(Veyra "veyra_i18n" PREFIX "/i18n" BASE "${CMAKE_CURRENT_SOURCE_
 target_link_libraries(Veyra PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Qml Qt6::Quick
   Qt6::QuickControls2 Qt6::Multimedia Qt6::Svg)
 
+# PS5 Remote Play (chiaki-ng, as Veyra on Windows). See cmake/RemotePlay.cmake.
+option(VEYRA_ENABLE_REMOTEPLAY "Build PS5 Remote Play (needs chiaki-ng and its dependencies)" ON)
+set(VEYRA_CHIAKI_SOURCE_DIR "" CACHE PATH "chiaki-ng tree prepared by scripts/fetch-chiaki.sh")
+if(VEYRA_ENABLE_REMOTEPLAY)
+  include(cmake/RemotePlay.cmake)
+  target_link_libraries(Veyra PRIVATE veyra_remoteplay)
+  target_compile_definitions(Veyra PRIVATE VEYRA_ENABLE_REMOTEPLAY=1)
+endif()
+
 file(GLOB VEYRA_SHADERS CONFIGURE_DEPENDS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} shaders/*.frag shaders/*.vert)
 # Enhancement shaders (Qt RHI: Metal / OpenGL on macOS).
 qt_add_shaders(Veyra "veyra_shaders" PREFIX "/shaders" BASE "${CMAKE_CURRENT_SOURCE_DIR}/shaders"
