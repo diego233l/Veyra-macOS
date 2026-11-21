@@ -1,0 +1,102 @@
+# Compila Veyra para macOS en GitHub y publica Veyra-macOS.dmg / .zip.
+# App universal (Intel x86_64 + Apple Silicon arm64), mínimo macOS 12 Monterey.
+name: macOS build
+
+on:
+  push:
+    branches: [main, master]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: macos-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  QT_VERSION: "6.8.3"
+
+jobs:
+  build:
+    # Los runners Intel (macos-13) se han retirado; se compila en Apple Silicon
+    # una app universal que también funciona en Macs Intel con macOS 12+.
+    runs-on: macos-14
+    timeout-minutes: 90
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Cache Qt
+        id: cache-qt
+        uses: actions/cache@v4
+        with:
+          path: .tools/Qt
+          key: qt-${{ env.QT_VERSION }}-macos-clang_64-multimedia-shadertools-v1
+
+      - name: Build (universal, Release)
+        env:
+          CI: "1"
+          VEYRA_ARCH: "x86_64;arm64"
+        run: bash ./compilar-mac.command
+
+      - name: Check binary architectures
+        run: |
+          lipo -info build-mac/Veyra.app/Contents/MacOS/Veyra
+          lipo -info build-mac/Veyra.app/Contents/Frameworks/QtCore.framework/QtCore
+          ls build-mac/Veyra.app/Contents/PlugIns/multimedia
+          du -sh build-mac/Veyra.app
+
+      - name: Package zip and dmg
+        run: |
+          mkdir -p dist
+          ditto -c -k --sequesterRsrc --keepParent build-mac/Veyra.app dist/Veyra-macOS.zip
+          bash scripts/make-dmg.sh build-mac/Veyra.app dist/Veyra-macOS.dmg
+          shasum -a 256 dist/* | tee dist/SHA256SUMS.txt
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Veyra-macOS
+          path: dist/*
+          if-no-files-found: error
+
+      - name: Release for tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/Veyra-macOS.dmg
+            dist/Veyra-macOS.zip
+            dist/SHA256SUMS.txt
+          generate_release_notes: true
+
+      - name: Move latest-mac tag
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        run: |
+          git tag -f latest-mac "$GITHUB_SHA"
+          git push -f origin refs/tags/latest-mac
+
+      - name: Rolling release latest-mac
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest-mac
+          name: Veyra para macOS (última compilación)
+          prerelease: true
+          make_latest: false
+          body: |
+            Compilación automática de `${{ github.sha }}`.
+            Descarga **Veyra-macOS.dmg**, arrastra Veyra a Aplicaciones y ábrela la primera vez con clic derecho → Abrir.
+            Funciona en Macs Intel y Apple Silicon con macOS 12 Monterey o posterior.
+          files: |
+            dist/Veyra-macOS.dmg
+            dist/Veyra-macOS.zip
+            dist/SHA256SUMS.txt
