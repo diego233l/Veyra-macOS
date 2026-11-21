@@ -232,6 +232,111 @@
    "zh": "Xbox streaming is not available in the macOS version. Xbox Cloud Gaming in a browser can be captured with Screen capture.",
    "en": "Xbox streaming is not available in the macOS version. Xbox Cloud Gaming in a browser can be captured with Screen capture.",
    "es": "El streaming de Xbox no está en la versión de macOS. Puedes capturar Xbox Cloud Gaming en el navegador con Captura de pantalla."
+  },
+  {
+   "zh": "Needs an NVIDIA RTX graphics card on Windows; not available on Mac",
+   "en": "Needs an NVIDIA RTX graphics card on Windows; not available on Mac",
+   "es": "Necesita una gráfica NVIDIA RTX en Windows; no disponible en Mac"
+  },
+  {
+   "zh": "Needs AMD or Intel drivers on Windows; not available on Mac",
+   "en": "Needs AMD or Intel drivers on Windows; not available on Mac",
+   "es": "Necesita drivers de AMD o Intel en Windows; no disponible en Mac"
+  },
+  {
+   "zh": "Frame generation needs NVIDIA, AMD or Intel runtimes on Windows; not available on Mac",
+   "en": "Frame generation needs NVIDIA, AMD or Intel runtimes on Windows; not available on Mac",
+   "es": "La generación de fotogramas necesita NVIDIA, AMD o Intel en Windows; no disponible en Mac"
+  },
+  {
+   "zh": "Beauty filters are not available on Mac",
+   "en": "Beauty filters are not available on Mac",
+   "es": "Los filtros de belleza no están disponibles en Mac"
+  },
+  {
+   "zh": "Only used together with NR, which needs NVIDIA or AMD on Windows",
+   "en": "Only used together with NR, which needs NVIDIA or AMD on Windows",
+   "es": "Solo se usa junto con NR, que necesita NVIDIA o AMD en Windows"
+  },
+  {
+   "zh": "Add a colour node to the chain first",
+   "en": "Add a colour node to the chain first",
+   "es": "Añade primero un nodo de color a la cadena"
+  },
+  {
+   "zh": "Import 3D LUT",
+   "en": "Import 3D LUT",
+   "es": "Importar LUT 3D"
+  },
+  {
+   "zh": "3D LUT files (*.cube)",
+   "en": "3D LUT files (*.cube)",
+   "es": "Archivos LUT 3D (*.cube)"
+  },
+  {
+   "zh": "This LUT could not be read: ",
+   "en": "This LUT could not be read: ",
+   "es": "No se pudo leer este LUT: "
+  },
+  {
+   "zh": "The LUT could not be copied into the library",
+   "en": "The LUT could not be copied into the library",
+   "es": "No se pudo copiar el LUT a la biblioteca"
+  },
+  {
+   "zh": "LUT not found in the library",
+   "en": "LUT not found in the library",
+   "es": "El LUT no está en la biblioteca"
+  },
+  {
+   "zh": "A look with this name already exists",
+   "en": "A look with this name already exists",
+   "es": "Ya existe un look con ese nombre"
+  },
+  {
+   "zh": "Import colour look",
+   "en": "Import colour look",
+   "es": "Importar look de color"
+  },
+  {
+   "zh": "Export colour look",
+   "en": "Export colour look",
+   "es": "Exportar look de color"
+  },
+  {
+   "zh": "Veyra colour looks (*.json)",
+   "en": "Veyra colour looks (*.json)",
+   "es": "Looks de color de Veyra (*.json)"
+  },
+  {
+   "zh": "This file is not a Veyra colour look",
+   "en": "This file is not a Veyra colour look",
+   "es": "Este archivo no es un look de color de Veyra"
+  },
+  {
+   "zh": "On Mac, anti-aliasing uses FXAA",
+   "en": "On Mac, anti-aliasing uses FXAA",
+   "es": "En Mac, el antialiasing usa FXAA"
+  },
+  {
+   "zh": "Spatial upscale (bicubic + sharpening)",
+   "en": "Spatial upscale (bicubic + sharpening)",
+   "es": "Escalado espacial (bicúbico + nitidez)"
+  },
+  {
+   "zh": "Super resolution (spatial)",
+   "en": "Super resolution (spatial)",
+   "es": "Superresolución (espacial)"
+  },
+  {
+   "zh": "This effect cannot be added more times",
+   "en": "This effect cannot be added more times",
+   "es": "Este efecto no se puede añadir más veces"
+  },
+  {
+   "zh": "That connection would create a loop",
+   "en": "That connection would create a loop",
+   "es": "Esa conexión crearía un bucle"
   }
  ]
 }
