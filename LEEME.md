@@ -68,7 +68,8 @@ Doble clic en **`compilar-mac.command`** (o `bash compilar-mac.command` en Termi
 | FSR 3.1 / FSR 4, AMD FRC | ❌ | Drivers AMD de Windows |
 | XeSS | ❌ | Solo Windows |
 | Generación de fotogramas (FG) | ❌ | Depende de los SDK anteriores |
-| Remote Play PS5, Xbox, Moonlight | ❌ | No portado |
+| PS5 Remote Play | ✅ | chiaki-ng (versión de Veyra 2.1.9); mando por SDL3 |
+| Xbox, Moonlight | ❌ | No portado |
 | Cámara virtual, búfer de repetición, audio virtual | ❌ | Controladores de Windows |
 | Exportar vídeo con las mejoras aplicadas | ❌ | No portado |
 
