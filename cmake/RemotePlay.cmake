@@ -67,6 +67,20 @@ set(BUILD_CURL_EXE OFF CACHE BOOL "" FORCE)
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
 
+# chiaki's protobuf step needs a `protoc`. Without a system one (macOS CI/local),
+# use nanopb's drop-in wrapper, run by our Python (which has grpcio-tools), and put
+# that Python first in PATH so protoc-gen-nanopb also finds it.
+find_program(PROTOC protoc)
+if(NOT PROTOC)
+    find_package(Python3 REQUIRED COMPONENTS Interpreter)
+    get_filename_component(_veyra_py_dir "${Python3_EXECUTABLE}" DIRECTORY)
+    set(_veyra_protoc "${CMAKE_CURRENT_BINARY_DIR}/veyra-protoc/protoc")
+    file(WRITE "${_veyra_protoc}"
+        "#!/bin/sh\nPATH=\"${_veyra_py_dir}:$PATH\" exec \"${Python3_EXECUTABLE}\" \"${VEYRA_CHIAKI_SOURCE_DIR}/third-party/nanopb/generator/protoc\" \"$@\"\n")
+    file(CHMOD "${_veyra_protoc}" PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+    set(PROTOC "${_veyra_protoc}" CACHE FILEPATH "protoc (nanopb wrapper)" FORCE)
+    message(STATUS "Remote Play: using nanopb's Python protoc wrapper (${PROTOC})")
+endif()
 add_subdirectory("${VEYRA_CHIAKI_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/chiaki" EXCLUDE_FROM_ALL)
 if(NOT TARGET chiaki-lib)
   message(FATAL_ERROR "chiaki-ng did not create chiaki-lib")
