@@ -27,6 +27,211 @@
    "en": "Cannot read the preset file",
    "fr": "Impossible de lire le fichier de préréglage",
    "de": "Voreinstellungsdatei kann nicht gelesen werden"
+  },
+  {
+   "zh": "播放中",
+   "en": "Playing",
+   "es": "Reproduciendo"
+  },
+  {
+   "zh": "正在打开…",
+   "en": "Opening…",
+   "es": "Abriendo…"
+  },
+  {
+   "zh": "文件不存在：%1",
+   "en": "File not found: %1",
+   "es": "No se encuentra el archivo: %1"
+  },
+  {
+   "zh": "截图已保存：%1",
+   "en": "Screenshot saved: %1",
+   "es": "Captura guardada: %1"
+  },
+  {
+   "zh": "Could not open %1: %2",
+   "en": "Could not open %1: %2",
+   "es": "No se pudo abrir %1: %2"
+  },
+  {
+   "zh": "Screenshot failed",
+   "en": "Screenshot failed",
+   "es": "No se pudo hacer la captura"
+  },
+  {
+   "zh": "Cannot create the recording folder: %1",
+   "en": "Cannot create the recording folder: %1",
+   "es": "No se puede crear la carpeta de grabaciones: %1"
+  },
+  {
+   "zh": "Cannot open folder: %1",
+   "en": "Cannot open folder: %1",
+   "es": "No se puede abrir la carpeta: %1"
+  },
+  {
+   "zh": "Choose a capture device and format first",
+   "en": "Choose a capture device and format first",
+   "es": "Elige primero un dispositivo de captura y un formato"
+  },
+  {
+   "zh": "Choose a capture target first",
+   "en": "Choose a capture target first",
+   "es": "Elige primero qué capturar"
+  },
+  {
+   "zh": "Choose a resolution and pixel format first",
+   "en": "Choose a resolution and pixel format first",
+   "es": "Elige primero una resolución y un formato de píxel"
+  },
+  {
+   "zh": "Choose a resolution first",
+   "en": "Choose a resolution first",
+   "es": "Elige primero una resolución"
+  },
+  {
+   "zh": "Choose where recordings are saved",
+   "en": "Choose where recordings are saved",
+   "es": "Elige dónde se guardan las grabaciones"
+  },
+  {
+   "zh": "Connecting…",
+   "en": "Connecting…",
+   "es": "Conectando…"
+  },
+  {
+   "zh": "Cropping is applied by the picture view on macOS.",
+   "en": "Cropping is applied by the picture view on macOS.",
+   "es": "En macOS el recorte lo aplica la vista de imagen."
+  },
+  {
+   "zh": "Device not connected",
+   "en": "Device not connected",
+   "es": "Dispositivo no conectado"
+  },
+  {
+   "zh": "Display %1",
+   "en": "Display %1",
+   "es": "Pantalla %1"
+  },
+  {
+   "zh": "Do not capture audio",
+   "en": "Do not capture audio",
+   "es": "No capturar audio"
+  },
+  {
+   "zh": "Driver settings dialogs are a Windows feature; on macOS use the capture device's own app.",
+   "en": "Driver settings dialogs are a Windows feature; on macOS use the capture device's own app.",
+   "es": "Los ajustes del controlador son de Windows; en macOS usa la app del propio dispositivo de captura."
+  },
+  {
+   "zh": "Game mode (click-through) is Windows-only.",
+   "en": "Game mode (click-through) is Windows-only.",
+   "es": "El modo juego (clic a través) solo existe en Windows."
+  },
+  {
+   "zh": "No capture session yet",
+   "en": "No capture session yet",
+   "es": "Aún no hay sesión de captura"
+  },
+  {
+   "zh": "No device selected",
+   "en": "No device selected",
+   "es": "Ningún dispositivo seleccionado"
+  },
+  {
+   "zh": "Nothing is playing, so there is nothing to record",
+   "en": "Nothing is playing, so there is nothing to record",
+   "es": "No se está reproduciendo nada, así que no hay nada que grabar"
+  },
+  {
+   "zh": "On macOS, choose the capture audio input here; Veyra plays it through the Mac's output.",
+   "en": "On macOS, choose the capture audio input here; Veyra plays it through the Mac's output.",
+   "es": "En macOS elige aquí la entrada de audio de la captura; Veyra la reproduce por la salida del Mac."
+  },
+  {
+   "zh": "On macOS, recording works for capture card, camera and screen sources. Use Export for files.",
+   "en": "On macOS, recording works for capture card, camera and screen sources. Use Export for files.",
+   "es": "En macOS se puede grabar desde capturadora, cámara y pantalla. Para archivos, usa Exportar."
+  },
+  {
+   "zh": "PC streaming (Moonlight) is not available in the macOS version. Moonlight for Mac can be captured with Screen capture.",
+   "en": "PC streaming (Moonlight) is not available in the macOS version. Moonlight for Mac can be captured with Screen capture.",
+   "es": "El streaming de PC (Moonlight) no está en la versión de macOS. Puedes capturar Moonlight para Mac con Captura de pantalla."
+  },
+  {
+   "zh": "PS5 Remote Play is not available in the macOS version. Sony's PS Remote Play app for Mac can be captured with Screen capture.",
+   "en": "PS5 Remote Play is not available in the macOS version. Sony's PS Remote Play app for Mac can be captured with Screen capture.",
+   "es": "PS5 Remote Play no está en la versión de macOS. Puedes capturar la app PS Remote Play de Sony para Mac con Captura de pantalla."
+  },
+  {
+   "zh": "Recording failed: %1",
+   "en": "Recording failed: %1",
+   "es": "La grabación falló: %1"
+  },
+  {
+   "zh": "Recording is already running",
+   "en": "Recording is already running",
+   "es": "Ya se está grabando"
+  },
+  {
+   "zh": "Recording saved: %1",
+   "en": "Recording saved: %1",
+   "es": "Grabación guardada: %1"
+  },
+  {
+   "zh": "Screen capture failed. Allow Veyra in System Preferences → Security & Privacy → Screen Recording, then reopen it.",
+   "en": "Screen capture failed. Allow Veyra in System Preferences → Security & Privacy → Screen Recording, then reopen it.",
+   "es": "Falló la captura de pantalla. Permite Veyra en Preferencias del Sistema → Seguridad y privacidad → Grabación de pantalla y vuelve a abrirla."
+  },
+  {
+   "zh": "Target not found",
+   "en": "Target not found",
+   "es": "No se encuentra el objetivo"
+  },
+  {
+   "zh": "The Veyra virtual camera is Windows-only.",
+   "en": "The Veyra virtual camera is Windows-only.",
+   "es": "La cámara virtual de Veyra solo existe en Windows."
+  },
+  {
+   "zh": "The capture device could not be opened",
+   "en": "The capture device could not be opened",
+   "es": "No se pudo abrir el dispositivo de captura"
+  },
+  {
+   "zh": "The instant replay buffer is Windows-only. Use Record on capture or screen sources.",
+   "en": "The instant replay buffer is Windows-only. Use Record on capture or screen sources.",
+   "es": "La repetición instantánea solo existe en Windows. Usa Grabar con captura o pantalla."
+  },
+  {
+   "zh": "The video view is not ready yet",
+   "en": "The video view is not ready yet",
+   "es": "La vista de vídeo aún no está lista"
+  },
+  {
+   "zh": "The virtual audio driver (VB-CABLE) is Windows-only. On macOS pick the capture device's audio input.",
+   "en": "The virtual audio driver (VB-CABLE) is Windows-only. On macOS pick the capture device's audio input.",
+   "es": "El controlador de audio virtual (VB-CABLE) solo existe en Windows. En macOS elige la entrada de audio de la capturadora."
+  },
+  {
+   "zh": "The window is no longer available; refresh the list",
+   "en": "The window is no longer available; refresh the list",
+   "es": "La ventana ya no está disponible; actualiza la lista"
+  },
+  {
+   "zh": "This device does not offer that format; choose resolution, frame rate and pixel format again.",
+   "en": "This device does not offer that format; choose resolution, frame rate and pixel format again.",
+   "es": "El dispositivo no ofrece ese formato; vuelve a elegir resolución, fotogramas y formato de píxel."
+  },
+  {
+   "zh": "Value out of range",
+   "en": "Value out of range",
+   "es": "Valor fuera de rango"
+  },
+  {
+   "zh": "Xbox streaming is not available in the macOS version. Xbox Cloud Gaming in a browser can be captured with Screen capture.",
+   "en": "Xbox streaming is not available in the macOS version. Xbox Cloud Gaming in a browser can be captured with Screen capture.",
+   "es": "El streaming de Xbox no está en la versión de macOS. Puedes capturar Xbox Cloud Gaming en el navegador con Captura de pantalla."
   }
  ]
 }
