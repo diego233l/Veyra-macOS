@@ -11,6 +11,16 @@ endif()
 find_package(Qt6 6.8 REQUIRED COMPONENTS Core Gui Widgets Qml Quick QuickControls2 Multimedia ShaderTools Svg)
 qt_standard_project_setup(REQUIRES 6.8)
 
+# Qt 6.8's WrapOpenGL still links the AGL framework, which recent Xcode SDKs no
+# longer ship. Nothing here uses AGL; drop it from the link interface.
+if(APPLE AND TARGET WrapOpenGL::WrapOpenGL)
+  get_target_property(_veyra_gl_libs WrapOpenGL::WrapOpenGL INTERFACE_LINK_LIBRARIES)
+  if(_veyra_gl_libs)
+    list(FILTER _veyra_gl_libs EXCLUDE REGEX "AGL")
+    set_target_properties(WrapOpenGL::WrapOpenGL PROPERTIES INTERFACE_LINK_LIBRARIES "${_veyra_gl_libs}")
+  endif()
+endif()
+
 # Bridge stubs generated from Veyra's own QmlPlayerBridge.h (kept in the tree
 # so the build does not need the Windows sources).
 set(VEYRA_SOURCES
