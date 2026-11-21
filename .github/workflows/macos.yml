@@ -23,7 +23,7 @@ jobs:
   build:
     # Los runners Intel (macos-13) se han retirado; se compila en Apple Silicon
     # una app universal que también funciona en Macs Intel con macOS 12+.
-    runs-on: macos-14
+    runs-on: macos-latest
     timeout-minutes: 90
     steps:
       - name: Checkout
