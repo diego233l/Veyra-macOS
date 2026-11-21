@@ -63,7 +63,16 @@ ok "$(xcrun clang --version | head -1)"
 # --- 2. CMake, Ninja y aqtinstall en un entorno virtual ------------------------
 paso "Preparando CMake, Ninja, pkgconf, protobuf y el descargador de Qt"
 mkdir -p "$TOOLS"
-PY="$(xcrun --find python3 2>/dev/null || command -v python3 || true)"
+# vcpkg's meson (FFmpeg) needs Python >= 3.10; the Xcode tools ship 3.9, so prefer a newer one.
+PY="${VEYRA_PYTHON:-}"
+if [ -z "$PY" ]; then
+  for cand in python3.13 python3.12 python3.11 python3.10 python3 "$(xcrun --find python3 2>/dev/null || true)"; do
+    c="$(command -v "$cand" 2>/dev/null || true)"; [ -n "$c" ] || continue
+    if "$c" -c 'import sys; sys.exit(0 if sys.version_info >= (3,10) else 1)' 2>/dev/null; then PY="$c"; break; fi
+  done
+fi
+if [ -z "$PY" ] && [ "${VEYRA_REMOTEPLAY:-1}" = "0" ]; then PY="$(xcrun --find python3 2>/dev/null || command -v python3 || true)"; fi
+[ -n "$PY" ] || fallo "Necesito Python 3.10 o superior para compilar las librerías del Remote Play. Instálalo desde https://www.python.org/downloads/macos/ y vuelve a ejecutar este script."
 [ -n "$PY" ] || fallo "No encuentro python3 (debería venir con las herramientas de Xcode)."
 VENV="$TOOLS/venv"
 if [ ! -x "$VENV/bin/python" ]; then
