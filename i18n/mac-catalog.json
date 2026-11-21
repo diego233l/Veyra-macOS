@@ -1,1 +1,32 @@
-{"entries":[]}
+{
+ "entries": [
+  {
+   "zh": " 副本",
+   "es": " (copia)",
+   "en": " (copy)",
+   "fr": " (copie)",
+   "de": " (Kopie)"
+  },
+  {
+   "zh": "已应用预设：",
+   "es": "Preajuste aplicado: ",
+   "en": "Preset applied: ",
+   "fr": "Préréglage appliqué : ",
+   "de": "Voreinstellung angewendet: "
+  },
+  {
+   "zh": "预设保存失败",
+   "es": "No se pudo guardar el preajuste",
+   "en": "Could not save the preset",
+   "fr": "Impossible d’enregistrer le préréglage",
+   "de": "Voreinstellung konnte nicht gespeichert werden"
+  },
+  {
+   "zh": "无法读取预设文件",
+   "es": "No se puede leer el archivo de preajuste",
+   "en": "Cannot read the preset file",
+   "fr": "Impossible de lire le fichier de préréglage",
+   "de": "Voreinstellungsdatei kann nicht gelesen werden"
+  }
+ ]
+}
